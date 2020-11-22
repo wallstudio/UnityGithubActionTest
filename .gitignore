@@ -79,3 +79,13 @@ crashlytics-build.properties
 
 # Local History for Visual Studio Code
 .history/
+
+Build/android/launcher/src/main/res
+Build/android/unityLibrary/src/main/libs
+Build/android/unityLibrary/src/main/assets
+Build/android/unityLibrary/src/main/jniLibs
+Build/android/unityLibrary/src/main/res
+
+Build/ios/Libraries/*.a
+Build/ios/Unity-iPhone
+Build/ios/Unity-iPhone Tests
