@@ -1,0 +1,81 @@
+name: BuildUnity 
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  unityBuild:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        UNITY_VERSION:
+          - 2019.4.4f1
+    container:
+      image: gableroux/unity3d:${{matrix.UNITY_VERSION}}-linux-il2cpp
+      # https://github.community/t/how-to-use-env-with-container-image/17252/16
+
+    steps:
+      - name: Install tools
+        run: |
+          apt -y install git
+          apt -y install wget
+
+      - uses: actions/checkout@v2
+          
+      - name: Status check
+        run: |
+          who
+          wget https://github.com/
+          pwd
+          ls -al
+
+      - name: Create ALF file
+        run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -logFile /dev/stdout -createManualActivationFile 2>&1 || echo
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Unity_v${{ matrix.UNITY_VERSION }}.alf
+          path: ./Unity_v${{ matrix.UNITY_VERSION }}.alf
+          retention-days: 1
+          
+      - name: Create ULF file and activate unity
+        run: |
+          echo -n "${{ secrets.UNITY_LICENSE }}" >> .Unity.ulf
+          ls -al .Unity.ulf
+          result=`/opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile /dev/stdout -manualLicenseFile .Unity.ulf 2>&1 || echo`
+          echo $result
+          contains=` echo $result | grep 'License file loaded' `
+          echo $contains
+          if [ "$contains" ];
+            then exit 0;
+            else exit 1;
+          fi          
+
+      - name: BuildAndroid
+        run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile /dev/stdout -projectPath . -executeMethod Build.BuildAndroid
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: android.log
+      #     path: ./android.log
+      #     retention-days: 1
+
+      - name: BuildIOS
+        run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile /dev/stdout -projectPath . -executeMethod Build.BuildIOS
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: ios.log
+      #     path: ./ios.log
+      #     retention-days: 1
+
+      - name: Git commit
+        run: |
+          git config --local user.email "example@example.com"
+          git config --local user.name "Github Actions"
+          git add .
+          git commit -m "Auto build"
+          git pull
+          git push origin $GITHUB_REF
