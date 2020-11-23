@@ -1,0 +1,18 @@
+name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # container:
+    #   image: gableroux/unity3d:${{matrix.UNITY_VERSION}}-linux-il2cpp
+      # https://github.community/t/how-to-use-env-with-container-image/17252/16
+
+    steps:
+
+      - run: |
+          apt -y install git
+          apt -y install wget
+          ls -al ~/
