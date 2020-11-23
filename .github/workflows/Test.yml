@@ -1,6 +1,8 @@
 name: Test
 
 on:
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -13,6 +15,6 @@ jobs:
     steps:
 
       - run: |
-          apt -y install git
-          apt -y install wget
+          sudo apt -y install git
+          sudo apt -y install wget
           ls -al ~/
