@@ -20,10 +20,14 @@ jobs:
       # https://github.community/t/how-to-use-env-with-container-image/17252/16
 
     steps:
+
       - name: Install tools
         run: |
           apt -y install git
           apt -y install wget
+
+      - name: Network setting
+        run: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
       - uses: actions/checkout@v2
           

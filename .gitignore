@@ -89,3 +89,4 @@ Build/android/unityLibrary/src/main/res
 Build/ios/Libraries/*.a
 Build/ios/Unity-iPhone
 Build/ios/Unity-iPhone Tests
+Packages/packages-lock.json
